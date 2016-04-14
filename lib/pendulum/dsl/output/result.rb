@@ -1,6 +1,6 @@
 module Pendulum::DSL::Output
   class Result < Base
-    define_setter :table
+    define_setter :table, :schema, :method, :mode
 
     def initialize(name)
       @name = name
@@ -8,7 +8,8 @@ module Pendulum::DSL::Output
     end
 
     def to_url
-      "#{@name}:#{@table}"
+      url = "#{@name}:#{@table}"
+      with_options(url, :schema, :method, :mode)
     end
   end
 end
