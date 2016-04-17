@@ -35,13 +35,19 @@ module Pendulum::Command
         return URI.parse(url) if ( url.empty? || url.include?('://') )
 
         # use result
-        name, table = url.split(':', 2)
+        name, table  = url.split(':', 2)
+        table, query = table.split('?', 2)
 
         result = result_by(name)
         return URI.parse(url) unless result
 
         uri = URI.parse(result.url)
         uri.path += "/#{table}"
+        if uri.query
+          uri.query += "&#{query}"
+        else
+          uri.query = query
+        end
         uri
       end
 
