@@ -33,6 +33,10 @@ module Pendulum::DSL
       @result = result.to_url
     end
 
+    def result_json(type, hash = {})
+      @result = {type: type}.merge(hash).to_json
+    end
+
     def to_params
       instance_variables.inject({}) do |params, v|
         params[v.to_s.delete('@').to_sym] = instance_variable_get(v)

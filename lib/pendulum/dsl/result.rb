@@ -20,6 +20,8 @@ module Pendulum::DSL
         Output::TreasureData.new
       when :postgresql
         Output::Postgresql.new
+      when :nend
+        Output::Nend.new
       else
         Output::Result.new(type)
       end

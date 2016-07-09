@@ -62,7 +62,7 @@ module Pendulum::Command
 
         @diff ||= begin
                     default_params.merge(to.to_params).select do |k, v|
-                      if k == :result
+                      if k == :result || k == :result_json
                         result_url_changed?(from.result_url, v)
                       else
                         v != from.send(k)
@@ -75,9 +75,16 @@ module Pendulum::Command
         return diff unless diff.key?(:result)
 
         masked = diff.dup
-        uri = URI.parse(masked[:result])
-        uri.password = '***' if uri.user
-        masked[:result] = uri.to_s
+
+        if masked[:result].start_with?('{') || diff.key?(:result_json)
+          hashed_result = JSON.parse(masked[:result])
+          hashed_result.delete('apikey')
+          masked[:result] = hashed_result.to_json
+        else
+          uri = URI.parse(masked[:result])
+          uri.password = '***' if uri.user
+          masked[:result] = uri.to_s
+        end
 
         masked
       end

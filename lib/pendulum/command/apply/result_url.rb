@@ -9,14 +9,34 @@ module Pendulum::Command
       end
 
       def changed?
+        if from.start_with?('{')
+          json_changed?
+        else
+          url_changed?
+        end
+      end
+
+      private
+
+      def json_changed?
+        to_json = JSON.parse(to)
+
+        name = to_json['type']
+        result = result_by(name)
+        to_json = JSON.parse(result.url) if result
+
+        to_json.delete('apikey')
+
+        JSON.parse(from) != to_json
+      end
+
+      def url_changed?
         from_uri = to_uri(from)
         to_uri   = mask(to_uri(to))
 
         uri_without_query(from_uri) != uri_without_query(to_uri) ||
           query_hash(from_uri) != query_hash(to_uri)
       end
-
-      private
 
       def mask(uri)
         uri.password = '***' if uri.user
