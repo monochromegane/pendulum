@@ -5,7 +5,7 @@ module Pendulum
   DEFAULT_SCHEDFILE = 'Schedfile'
   class Runner
     def run(argv=ARGV)
-      api_key = nil
+      api_key = ENV['TD_API_KEY']
       mode    = nil
       dry_run = false
       force   = false
